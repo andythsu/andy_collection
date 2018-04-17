@@ -49,6 +49,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         parent_list_view = (ListView) findViewById(R.id.parent_list);
         db_connect_error = (TextView) findViewById(R.id.no_db_label);
+        
+        // sets the default screen message
+        db_connect_error.setVisibility(View.VISIBLE);
 
         // getting instance of Azure Mobile Client
         if(mClient == null){
