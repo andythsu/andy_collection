@@ -10,26 +10,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Collection implements Parcelable{
-//    @com.google.gson.annotations.SerializedName("ID")
     private String ID; // PK in the DB
-//    @com.google.gson.annotations.SerializedName("Name")
     private String Name;
-//    @com.google.gson.annotations.SerializedName("Location")
     private String Location;
-//    @com.google.gson.annotations.SerializedName("Category")
     private String Category;
-
-
-//    public static Collection create(String name, String location, String category){
-//        return new Collection(name, location, category);
-//    }
-//
-//    private Collection(String name, String location, String category){
-//        this.id = Long.toString(new java.util.Date().getTime()); // use time stamp to get unique ID
-//        this.Name = name;
-//        this.Location = location;
-//        this.Category = category;
-//    }
 
     public Collection(String id, String name, String location, String category){
         this.ID = id;

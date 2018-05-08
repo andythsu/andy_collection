@@ -5,6 +5,8 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static MobileServiceClient mClient;
     ListView parent_list_view;
     TextView db_connect_error;
+    FloatingActionButton add_btn;
+
     Tree t = new Tree();
     Node root = t.getRoot();
     @Override
@@ -49,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         parent_list_view = (ListView) findViewById(R.id.parent_list);
         db_connect_error = (TextView) findViewById(R.id.no_db_label);
+        add_btn = (FloatingActionButton) findViewById(R.id.add_btn);
 
         // sets the default screen message
         db_connect_error.setVisibility(View.VISIBLE);
@@ -82,17 +87,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             e.printStackTrace();
         }
 
-//        MobileServiceTable<Collection> table = mClient.getTable("collection", Collection.class);
-//        try {
-//            List<Collection> results = table.execute().get();
-//            System.out.println("here");
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        } catch (MobileServiceException e) {
-//            e.printStackTrace();
-//        }
+        /////////////////////////////////////////
+
+        // add button clicked
+        add_btn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
     }
 
