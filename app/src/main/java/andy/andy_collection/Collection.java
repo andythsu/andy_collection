@@ -15,8 +15,20 @@ public class Collection implements Parcelable{
     private String Location;
     private String Category;
 
+    // used by azure to bind data
     public Collection(String id, String name, String location, String category){
         this.ID = id;
+        this.Name = name;
+        this.Location = location;
+        this.Category = category;
+    }
+
+    public static Collection create(String name, String location, String category){
+        return new Collection(name, location, category);
+    }
+
+
+    private Collection(String name, String location, String category){
         this.Name = name;
         this.Location = location;
         this.Category = category;

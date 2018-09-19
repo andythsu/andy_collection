@@ -122,11 +122,11 @@ public class Tree implements Parcelable{
             }else {
                 System.out.println(root.toString());
             }
-        }
-        if(root.getChildren() != null) {
-            for(int i=0; i<root.getChildren().size(); i++) {
-                Node child = root.getChildren().get(i);
-                traverseTree(child);
+            if(root.getChildren() != null) {
+                for(int i=0; i<root.getChildren().size(); i++) {
+                    Node child = root.getChildren().get(i);
+                    traverseTree(child);
+                }
             }
         }
     }
