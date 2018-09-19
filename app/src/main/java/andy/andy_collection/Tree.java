@@ -49,14 +49,30 @@ public class Tree implements Parcelable{
     }
 
     /**
-     * get all level 2 parent nodes
+     * get all nodes that are category
      * @return
      */
-    public ArrayList<Node> getAllLevel2Nodes(){
+    public ArrayList<Node> getAllCategoryNodes(){
         if(root != null && root.getChildren() != null) {
             return root.getChildren();
         }
         return null;
+    }
+
+    public void addCollectionElement(Collection c){
+        // try to get level 2 parent node in tree
+        Node parentNode = getLevel2NodeByCategory(c.getCategory());
+        // if parent is not found
+        if (parentNode == null) {
+            // create missing level 2 parent
+            parentNode = new Node(c.getCategory());
+            // add to root node (level 1)
+            root.addChildren(parentNode);
+        }
+        // create level 3 node
+        Node newNode = new Node(c.getCategory(), c);
+        // add to level 2
+        parentNode.addChildren(newNode);
     }
 
     /**
@@ -64,7 +80,7 @@ public class Tree implements Parcelable{
      * @return
      */
     public String[] getAllLevel2NodeNames(){
-        ArrayList<Node> parent = getAllLevel2Nodes();
+        ArrayList<Node> parent = getAllCategoryNodes();
         String[] rtn = new String[parent.size()];
         for(int i=0; i<rtn.length; i++){
             rtn[i] = parent.get(i).toString();
@@ -120,6 +136,7 @@ public class Tree implements Parcelable{
             if(root.getData() != null) {
                 System.out.println(root.getData().toString());
             }else {
+                // if it's a category, output it's name only
                 System.out.println(root.toString());
             }
             if(root.getChildren() != null) {

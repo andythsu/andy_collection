@@ -21,8 +21,8 @@ public class Node implements Parcelable{
     }
 
     public Node(String name, Collection d) {
-        this.data = d;
         this.name = name;
+        this.data = d;
     }
 
     protected Node(Parcel in) {

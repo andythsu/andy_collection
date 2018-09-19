@@ -10,18 +10,26 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Collection implements Parcelable{
+    @com.google.gson.annotations.SerializedName("ID")
     private String ID; // PK in the DB
+    @com.google.gson.annotations.SerializedName("Name")
     private String Name;
+    @com.google.gson.annotations.SerializedName("Location")
     private String Location;
+    @com.google.gson.annotations.SerializedName("Category")
     private String Category;
 
+    public Collection(){}
+
+
     // used by azure to bind data
-    public Collection(String id, String name, String location, String category){
-        this.ID = id;
-        this.Name = name;
-        this.Location = location;
-        this.Category = category;
-    }
+//    public Collection(String id, String name, String location, String category){
+//        this.ID = id;
+//        this.Name = name;
+//        this.Location = location;
+//        this.Category = category;
+//    }
+
 
     public static Collection create(String name, String location, String category){
         return new Collection(name, location, category);
@@ -77,6 +85,7 @@ public class Collection implements Parcelable{
     public String getCategory() {
         return Category;
     }
+
     @Override
     public String toString() {
         return "ID: " + ID + "\n" + "Name: " + Name + "\n" + "Location: " + Location + "\n" +"Category: " + Category + "\n";
