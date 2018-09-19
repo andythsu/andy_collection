@@ -21,6 +21,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.microsoft.windowsazure.mobileservices.*;
+import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceJsonTable;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
@@ -30,16 +31,19 @@ import com.microsoft.windowsazure.mobileservices.table.TableQueryCallback;
 import com.microsoft.windowsazure.mobileservices.table.query.ExecutableQuery;
 import com.microsoft.windowsazure.mobileservices.table.query.Query;
 
+import com.squareup.okhttp.OkHttpClient;
 import org.json.JSONArray;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     private static MobileServiceClient mClient;
+    private MobileServiceTable<Collection> table;
     ListView parent_list_view;
     TextView exception_label;
     FloatingActionButton add_btn;
@@ -55,7 +59,46 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         exception_label = (TextView) findViewById(R.id.exception_label);
         add_btn = (FloatingActionButton) findViewById(R.id.add_btn);
 
-        init();
+//        init();
+
+        try {
+            mClient = new MobileServiceClient(
+                    "https://andy-collection.azurewebsites.net",
+                    this);
+
+
+        // Extend timeout from default of 10s to 20s
+        mClient.setAndroidHttpClientFactory(new OkHttpClientFactory() {
+            @Override
+            public OkHttpClient createOkHttpClient() {
+                OkHttpClient client = new OkHttpClient();
+                client.setReadTimeout(20, TimeUnit.SECONDS);
+                client.setWriteTimeout(20, TimeUnit.SECONDS);
+                return client;
+            }
+        });
+
+        table = mClient.getTable(Collection.class);
+
+
+            List<Collection> results = table.execute().get();
+            System.out.println("here");
+            for(Collection c : results){
+                System.out.println(c.toString());
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (MobileServiceException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+        e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
 
         // add button clicked
         add_btn.setOnClickListener(new View.OnClickListener(){
