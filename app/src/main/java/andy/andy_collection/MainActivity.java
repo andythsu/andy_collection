@@ -41,7 +41,7 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     private static MobileServiceClient mClient;
     ListView parent_list_view;
-    TextView db_connect_error;
+    TextView exception_label;
     FloatingActionButton add_btn;
 
     Tree t = new Tree();
@@ -52,13 +52,52 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
 
         parent_list_view = (ListView) findViewById(R.id.parent_list);
-        db_connect_error = (TextView) findViewById(R.id.no_db_label);
+        exception_label = (TextView) findViewById(R.id.exception_label);
         add_btn = (FloatingActionButton) findViewById(R.id.add_btn);
 
+        init();
+
+        // add button clicked
+        add_btn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                System.out.println("button clicked");
+                Collection newData = Collection.create("testing_09_19_1", "testing_location", "testing_category");
+                insert(newData);
+            }
+        });
+    }
+
+    private void init() {
         // sets the default screen message
-        db_connect_error.setVisibility(View.VISIBLE);
+        exception_label.setText("Establishing DB connection...");
+        exception_label.setVisibility(View.VISIBLE);
 
         // getting instance of Azure Mobile Client
+        getMobileClientInstance();
+        ////////////////////////////////////////
+
+        // retrieving data from DB
+        getDataFromDB();
+        /////////////////////////////////////////
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        resetTree();
+        getDataFromDB();
+    }
+
+    /**
+     * reset tree structure because new items are being added to DB
+     */
+    private void resetTree() {
+        t = new Tree();
+        root = t.getRoot();
+    }
+
+    public void getMobileClientInstance() {
         if(mClient == null){
             try {
                 AzureServiceAdapter.Initialize(this);
@@ -67,14 +106,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 e.printStackTrace();
             }
         }
-        ////////////////////////////////////////
+    }
 
-        // retrieving data from DB
+    public void getDataFromDB() {
         try {
             mClient.getTable(Collection.class).execute(new TableQueryCallback<Collection>() {
                 @Override
                 public void onCompleted(List<Collection> result, int count, Exception exception, ServiceFilterResponse response) {
-                    db_connect_error.setVisibility(View.INVISIBLE);
+                    exception_label.setVisibility(View.INVISIBLE);
+                    if(exception != null){
+                        exception_label.setText(exception.toString());
+                        exception_label.setVisibility(View.VISIBLE);
+                    }
                     initTree(result);
                     t.traverseTree();
                     ArrayAdapter<String> parent_list_adapter = new ArrayAdapter<>(MainActivity.this,android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
@@ -83,21 +126,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             });
         } catch (MobileServiceException e) {
-            db_connect_error.setVisibility(View.VISIBLE);
+            exception_label.setVisibility(View.VISIBLE);
             e.printStackTrace();
         }
-
-        /////////////////////////////////////////
-
-        // add button clicked
-        add_btn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-
     }
 
 
@@ -117,20 +148,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void initTree(List<Collection> result){
-        for(Collection c : result){
-            // try to get level 2 parent node in tree
-            Node parentNode = t.getLevel2NodeByCategory(c.getCategory());
-            // if parent is not found
-            if(parentNode == null) {
-                // create missing level 2 parent
-                parentNode = new Node(c.getCategory());
-                // add to root node (level 1)
-                root.addChildren(parentNode);
+        if(result != null){
+            for(Collection c : result){
+                // try to get level 2 parent node in tree
+                Node parentNode = t.getLevel2NodeByCategory(c.getCategory());
+                // if parent is not found
+                if(parentNode == null) {
+                    // create missing level 2 parent
+                    parentNode = new Node(c.getCategory());
+                    // add to root node (level 1)
+                    root.addChildren(parentNode);
+                }
+                // create level 3 node
+                Node newNode = new Node(c.getCategory(), c);
+                // add to level 2
+                parentNode.addChildren(newNode);
             }
-            // create level 3 node
-            Node newNode = new Node(c.getCategory(), c);
-            // add to level 2
-            parentNode.addChildren(newNode);
         }
     }
 
