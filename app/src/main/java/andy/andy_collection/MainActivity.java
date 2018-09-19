@@ -61,9 +61,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         add_btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                System.out.println("button clicked");
-                Collection newData = Collection.create("testing_09_19_1", "testing_location", "testing_category");
-                insert(newData);
+               
             }
         });
     }
