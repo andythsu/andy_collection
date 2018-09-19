@@ -59,6 +59,10 @@ public class Tree implements Parcelable{
         return null;
     }
 
+    /**
+     * adds collection element into tree
+     * @param c
+     */
     public void addCollectionElement(Collection c){
         // try to get level 2 parent node in tree
         Node parentNode = getLevel2NodeByCategory(c.getCategory());

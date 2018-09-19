@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     TextView exception_label;
     FloatingActionButton add_btn;
 
+    ArrayAdapter<String> parent_list_adapter;
+
     Tree t = new Tree();
     Node root = t.getRoot();
 
@@ -64,6 +66,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            t.addCollectionElement(c);
+                            parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
+                            parent_list_view.setAdapter(parent_list_adapter);
+                            parent_list_view.setOnItemClickListener(MainActivity.this);
                             toast("Inserted successfully");
                         }
                     });
@@ -89,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void getAllDataFromDB() {
-        exception_label.setVisibility(View.INVISIBLE);
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -99,8 +104,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         @Override
                         public void run() {
                             initTree(results);
+                            exception_label.setVisibility(View.INVISIBLE);
                             t.traverseTree();
-                            ArrayAdapter<String> parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
+                            parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
                             parent_list_view.setAdapter(parent_list_adapter);
                             parent_list_view.setOnItemClickListener(MainActivity.this);
                         }
@@ -219,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
     */
-    
+
     public void initTree(List<Collection> result) {
         if (result != null) {
             for (Collection c : result) {
