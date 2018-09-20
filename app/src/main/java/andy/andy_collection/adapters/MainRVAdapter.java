@@ -1,4 +1,4 @@
-package andy.andy_collection;
+package andy.andy_collection.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,20 +8,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import andy.andy_collection.structure.Collection;
+import andy.andy_collection.R;
 
 import java.util.List;
 
-public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CatViewHolder> {
+public class MainRVAdapter extends RecyclerView.Adapter<MainRVAdapter.MainViewHolder> {
 
     private List<Collection> list;
     private Context context;
 
-    public static class CatViewHolder extends RecyclerView.ViewHolder {
+    public static class MainViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         TextView name;
         TextView location;
         TextView category;
-        public CatViewHolder(View itemView) {
+        public MainViewHolder(View itemView) {
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.main_cv);
             name = (TextView)itemView.findViewById(R.id.name);
@@ -30,7 +32,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CatViewHolder> {
         }
     }
 
-    public RVAdapter(Context context, List<Collection> list){
+    public MainRVAdapter(Context context, List<Collection> list){
         this.context = context;
         this.list = list;
     }
@@ -42,13 +44,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CatViewHolder> {
 
     @NonNull
     @Override
-    public RVAdapter.CatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_card_view, parent, false);
-        return new RVAdapter.CatViewHolder(v);
+        return new MainViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RVAdapter.CatViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull MainViewHolder holder, final int position) {
         holder.name.setText(list.get(position).getName());
         holder.location.setText(list.get(position).getLocation());
         holder.category.setText(list.get(position).getCategory());

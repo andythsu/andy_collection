@@ -14,6 +14,11 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import andy.andy_collection.adapters.AzureServiceAdapter;
+import andy.andy_collection.adapters.MainRVAdapter;
+import andy.andy_collection.structure.Collection;
+import andy.andy_collection.structure.Node;
+import andy.andy_collection.structure.Tree;
 import com.microsoft.windowsazure.mobileservices.*;
 
 import java.net.MalformedURLException;
@@ -44,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         ArrayList<Collection> ls = Collection.getDummy();
 
-        RVAdapter adapter = new RVAdapter(this, ls);
+        MainRVAdapter adapter = new MainRVAdapter(this, ls);
         rv.setAdapter(adapter);
 
 //        parent_list_view = (ListView) findViewById(R.id.parent_list);
