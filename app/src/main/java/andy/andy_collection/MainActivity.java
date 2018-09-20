@@ -7,6 +7,8 @@ import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,11 +28,13 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     private static MobileServiceClient mClient;
-    ListView parent_list_view;
+    //    ListView parent_list_view;
     TextView exception_label;
     FloatingActionButton add_btn;
 
-    ArrayAdapter<String> parent_list_adapter;
+    RecyclerView rv;
+
+//    ArrayAdapter<String> parent_list_adapter;
 
     Tree t = new Tree();
     Node root = t.getRoot();
@@ -38,23 +42,30 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.recycler_view);
 
-        parent_list_view = (ListView) findViewById(R.id.parent_list);
-        exception_label = (TextView) findViewById(R.id.exception_label);
-        add_btn = (FloatingActionButton) findViewById(R.id.add_btn);
+        rv = (RecyclerView) findViewById(R.id.rv);
+        rv.setLayoutManager(new LinearLayoutManager(this));
 
+        ArrayList<Collection> ls = Collection.getDummy();
 
-        init();
+        RVAdapter adapter = new RVAdapter(this, ls);
+        rv.setAdapter(adapter);
+
+//        parent_list_view = (ListView) findViewById(R.id.parent_list);
+//        exception_label = (TextView) findViewById(R.id.exception_label);
+//        add_btn = (FloatingActionButton) findViewById(R.id.add_btn);
+
+//        init();
 
         // add button clicked
-        add_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Collection c = Collection.create("new", "new_loc", "new_cataaa");
-                insert(c);
-            }
-        });
+//        add_btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Collection c = Collection.create("new", "new_loc", "new_cataaa");
+//                insert(c);
+//            }
+//        });
     }
 
     private void insert(final Collection c) {
@@ -67,9 +78,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         @Override
                         public void run() {
                             t.addCollectionElement(c);
-                            parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
-                            parent_list_view.setAdapter(parent_list_adapter);
-                            parent_list_view.setOnItemClickListener(MainActivity.this);
+//                            parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
+//                            parent_list_view.setAdapter(parent_list_adapter);
+//                            parent_list_view.setOnItemClickListener(MainActivity.this);
                             toast("Inserted successfully");
                         }
                     });
@@ -106,9 +117,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             initTree(results);
                             exception_label.setVisibility(View.INVISIBLE);
                             t.traverseTree();
-                            parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
-                            parent_list_view.setAdapter(parent_list_adapter);
-                            parent_list_view.setOnItemClickListener(MainActivity.this);
+//                            parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
+//                            parent_list_view.setAdapter(parent_list_adapter);
+//                            parent_list_view.setOnItemClickListener(MainActivity.this);
                         }
                     });
                 } catch (final Exception e) {
@@ -225,7 +236,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
     */
-
     public void initTree(List<Collection> result) {
         if (result != null) {
             for (Collection c : result) {
