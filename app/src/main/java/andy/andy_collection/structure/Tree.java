@@ -8,7 +8,9 @@ package andy.andy_collection.structure;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * structure:
@@ -52,12 +54,13 @@ public class Tree implements Parcelable{
      * get all nodes that are category
      * @return
      */
-    public ArrayList<Node> getAllCategoryNodes(){
+    public List<Node> getAllCategoryNodes(){
         if(root != null && root.getChildren() != null) {
             return root.getChildren();
         }
         return null;
     }
+
 
     /**
      * adds collection element into tree
@@ -77,19 +80,6 @@ public class Tree implements Parcelable{
         Node newNode = new Node(c.getCategory(), c);
         // add to level 2
         parentNode.addChildren(newNode);
-    }
-
-    /**
-     * get all level 2 parent names
-     * @return
-     */
-    public String[] getAllLevel2NodeNames(){
-        ArrayList<Node> parent = getAllCategoryNodes();
-        String[] rtn = new String[parent.size()];
-        for(int i=0; i<rtn.length; i++){
-            rtn[i] = parent.get(i).toString();
-        }
-        return rtn;
     }
 
 

@@ -45,18 +45,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.main_recycler_view);
 
         rv = (RecyclerView) findViewById(R.id.main_rv);
+        exception_label = (TextView) findViewById(R.id.exception_label);
+
         rv.setLayoutManager(new LinearLayoutManager(this));
 
-        ArrayList<Collection> ls = Collection.getDummy();
-
-        MainRVAdapter adapter = new MainRVAdapter(this, ls);
-        rv.setAdapter(adapter);
+        init();
 
 //        parent_list_view = (ListView) findViewById(R.id.parent_list);
-//        exception_label = (TextView) findViewById(R.id.exception_label);
 //        add_btn = (FloatingActionButton) findViewById(R.id.add_btn);
 
-//        init();
+//
 
         // add button clicked
 //        add_btn.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +114,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         public void run() {
                             initTree(results);
                             exception_label.setVisibility(View.INVISIBLE);
-                            t.traverseTree();
+                            MainRVAdapter adapter = new MainRVAdapter(getApplicationContext(), t.getAllCategoryNodes());
+                            rv.setAdapter(adapter);
+//                            t.traverseTree();
 //                            parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
 //                            parent_list_view.setAdapter(parent_list_adapter);
 //                            parent_list_view.setOnItemClickListener(MainActivity.this);

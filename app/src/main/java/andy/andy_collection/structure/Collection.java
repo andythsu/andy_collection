@@ -21,8 +21,7 @@ public class Collection implements Parcelable {
     @com.google.gson.annotations.SerializedName("Category")
     private String Category;
 
-    public Collection() {
-    }
+    public Collection() { }
 
 
     // used by azure to bind data
