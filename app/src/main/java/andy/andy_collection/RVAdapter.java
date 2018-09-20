@@ -23,7 +23,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CatViewHolder> {
         TextView category;
         public CatViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.cardview);
+            cv = (CardView)itemView.findViewById(R.id.main_cv);
             name = (TextView)itemView.findViewById(R.id.name);
             location = (TextView)itemView.findViewById(R.id.location);
             category = (TextView)itemView.findViewById(R.id.category);
@@ -43,7 +43,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CatViewHolder> {
     @NonNull
     @Override
     public RVAdapter.CatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_card_view, parent, false);
         return new RVAdapter.CatViewHolder(v);
     }
 
