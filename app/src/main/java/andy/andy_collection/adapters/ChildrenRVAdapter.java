@@ -26,14 +26,12 @@ public class ChildrenRVAdapter extends RecyclerView.Adapter<ChildrenRVAdapter.Ch
         CardView cv;
         TextView name;
         TextView location;
-        TextView category;
 
         public ChildrenViewHolder(View itemView) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.main_cv);
             name = (TextView) itemView.findViewById(R.id.children_name);
             location = (TextView) itemView.findViewById(R.id.children_location);
-            category = (TextView) itemView.findViewById(R.id.children_category);
         }
     }
 
@@ -58,8 +56,6 @@ public class ChildrenRVAdapter extends RecyclerView.Adapter<ChildrenRVAdapter.Ch
     public void onBindViewHolder(@NonNull ChildrenViewHolder holder, int position) {
         holder.name.setText(list.get(position).getData().getName());
         holder.location.setText(list.get(position).getData().getLocation());
-        holder.category.setText(list.get(position).getData().getCategory());
-
     }
 
     @Override
