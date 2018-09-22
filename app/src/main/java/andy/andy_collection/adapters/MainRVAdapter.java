@@ -1,17 +1,24 @@
 package andy.andy_collection.adapters;
 
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import andy.andy_collection.ChildrenActivity;
+import andy.andy_collection.MainActivity;
 import andy.andy_collection.structure.Collection;
 import andy.andy_collection.R;
 import andy.andy_collection.structure.Node;
+import andy.andy_collection.structure.Tree;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainRVAdapter extends RecyclerView.Adapter<MainRVAdapter.MainViewHolder> {
@@ -19,21 +26,23 @@ public class MainRVAdapter extends RecyclerView.Adapter<MainRVAdapter.MainViewHo
     private List<Node> parent_nodes;
     private Context context;
 
+
     public static class MainViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         TextView name;
         TextView location;
         TextView category;
+
         public MainViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.main_cv);
-            name = (TextView)itemView.findViewById(R.id.name);
+            cv = (CardView) itemView.findViewById(R.id.main_cv);
+            name = (TextView) itemView.findViewById(R.id.name);
 //            location = (TextView)itemView.findViewById(R.id.location);
 //            category = (TextView)itemView.findViewById(R.id.category);
         }
     }
 
-    public MainRVAdapter(Context context, List<Node> parent_nodes){
+    public MainRVAdapter(Context context, List<Node> parent_nodes) {
         this.context = context;
         this.parent_nodes = parent_nodes;
     }
@@ -58,7 +67,11 @@ public class MainRVAdapter extends RecyclerView.Adapter<MainRVAdapter.MainViewHo
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("clicked" + parent_nodes.get(position).getName());
+                Node parent_node = parent_nodes.get(position);
+                Intent i = new Intent(context, ChildrenActivity.class);
+                ActivityOptions animation = ActivityOptions.makeCustomAnimation(context, R.anim.slide_in_right, R.anim.slide_out_left);
+                i.putExtra("node", parent_node);
+                v.getContext().startActivity(i, animation.toBundle());
             }
         });
     }

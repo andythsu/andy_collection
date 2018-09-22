@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity {
     private static MobileServiceClient mClient;
     //    ListView parent_list_view;
     TextView exception_label;
@@ -244,18 +244,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        TextView text = (TextView) view;
-        String clickedText = text.getText().toString();
-        Intent i = new Intent(getBaseContext(), ChildrenActivity.class);
-
-        // set the animation when jumping to another intent
-        ActivityOptions animation = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left);
-
-        i.putExtra("node", t.getLevel2NodeByCategory(clickedText));
-
-        startActivity(i, animation.toBundle());
-    }
+//    @Override
+//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//        TextView text = (TextView) view;
+//        String clickedText = text.getText().toString();
+//        Intent i = new Intent(getBaseContext(), ChildrenActivity.class);
+//
+//        // set the animation when jumping to another intent
+//        ActivityOptions animation = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left);
+//
+//        i.putExtra("node", t.getLevel2NodeByCategory(clickedText));
+//
+//        startActivity(i, animation.toBundle());
+//    }
 }
 

@@ -125,7 +125,7 @@ public class Tree implements Parcelable{
     /**
      * @param root
      */
-    private void traverseTree(Node root) {
+    public void traverseTree(Node root) {
         if(root != null) {
             if(root.getData() != null) {
                 System.out.println(root.getData().toString());
