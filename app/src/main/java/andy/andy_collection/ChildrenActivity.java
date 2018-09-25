@@ -1,16 +1,18 @@
 package andy.andy_collection;
 
 import android.app.AlertDialog;
+import android.graphics.Canvas;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.*;
 import andy.andy_collection.adapters.ChildrenRVAdapter;
+import andy.andy_collection.controllers.swipeController;
 import andy.andy_collection.structure.Collection;
 import andy.andy_collection.structure.Node;
-import andy.andy_collection.structure.Tree;
 
 import java.util.ArrayList;
 
@@ -38,7 +40,18 @@ public class ChildrenActivity extends AppCompatActivity implements AdapterView.O
         rv.setLayoutManager(new LinearLayoutManager(this));
 
         ChildrenRVAdapter adapter = new ChildrenRVAdapter(this, children_node);
+        swipeController sc = new swipeController();
+        ItemTouchHelper touchHelper = new ItemTouchHelper(sc);
+
         rv.setAdapter(adapter);
+        touchHelper.attachToRecyclerView(rv);
+        
+        rv.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+                swipeController.onDraw(c);
+            }
+        });
 
         // getting all names and store as array to display to ListView
 //        String[] children_node_names = new String[children_node.size()];
