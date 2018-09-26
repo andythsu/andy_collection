@@ -1,4 +1,4 @@
-package andy.andy_collection.controllers;
+package andy.andy_collection.swipeing;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -23,7 +23,9 @@ public class swipeController extends Callback {
 
     private ButtonsState buttonShowedState = ButtonsState.GONE;
 
-//    private RectF buttonInstance = null;
+    private static RectF editBtnInstance = null;
+
+    private static RectF deleteBtnInstance = null;
 
     private static RecyclerView.ViewHolder currentItemViewHolder = null;
 
@@ -32,6 +34,12 @@ public class swipeController extends Callback {
     private static final float MARGIN = 10;
 
     private static final float NUM_OF_BTNS = 2;
+
+    private static swipeActions buttonAction;
+
+    public swipeController(swipeActions action) {
+        this.buttonAction = action;
+    }
 
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
@@ -61,12 +69,12 @@ public class swipeController extends Callback {
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
 
         currentItemViewHolder = viewHolder;
-//        onDraw(c);
 
         if (actionState == ACTION_STATE_SWIPE) {
             if (buttonShowedState != ButtonsState.GONE) {
 //                if (buttonShowedState == ButtonsState.LEFT_VISIBLE) dX = Math.max(dX, BUTTON_WIDTH);
-                if (buttonShowedState == ButtonsState.RIGHT_VISIBLE) dX = Math.min(dX, -BUTTON_WIDTH * NUM_OF_BTNS - MARGIN);
+                if (buttonShowedState == ButtonsState.RIGHT_VISIBLE)
+                    dX = Math.min(dX, -BUTTON_WIDTH * NUM_OF_BTNS - MARGIN);
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             } else {
                 setTouchListener(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
@@ -124,6 +132,18 @@ public class swipeController extends Callback {
                     });
                     setItemsClickable(recyclerView, true);
                     swipeBack = false;
+                    if (buttonAction != null) {
+                        if (editBtnInstance != null && editBtnInstance.contains(event.getX(), event.getY())) {
+                            if (buttonShowedState == ButtonsState.RIGHT_VISIBLE) {
+                                // edit button clicked
+                                buttonAction.onClicked("edit", viewHolder.getAdapterPosition());
+                            }
+                        } else if (deleteBtnInstance != null && deleteBtnInstance.contains(event.getX(), event.getY())) {
+                            if (buttonShowedState == ButtonsState.RIGHT_VISIBLE) {
+                                buttonAction.onClicked("delete", viewHolder.getAdapterPosition());
+                            }
+                        }
+                    }
                     buttonShowedState = ButtonsState.GONE;
                     currentItemViewHolder = null;
                 }
@@ -145,22 +165,27 @@ public class swipeController extends Callback {
         View itemView = viewHolder.itemView;
         Paint p = new Paint();
 
-        RectF editButton = new RectF(itemView.getRight() - BUTTON_WIDTH* NUM_OF_BTNS, itemView.getTop(), itemView.getRight() - BUTTON_WIDTH, itemView.getBottom());
+        RectF editBtn = new RectF(itemView.getRight() - BUTTON_WIDTH * NUM_OF_BTNS, itemView.getTop(), itemView.getRight() - BUTTON_WIDTH, itemView.getBottom());
         p.setColor(Color.BLUE);
-        c.drawRoundRect(editButton, corners, corners, p);
-        drawText("EDIT", c, editButton, p);
+        c.drawRoundRect(editBtn, corners, corners, p);
+        drawText("EDIT", c, editBtn, p);
 
-        RectF deleteBtn = new RectF(editButton.right + MARGIN, itemView.getTop(), itemView.getRight(), itemView.getBottom());
+        RectF deleteBtn = new RectF(editBtn.right + MARGIN, itemView.getTop(), itemView.getRight(), itemView.getBottom());
         p.setColor(Color.RED);
         c.drawRoundRect(deleteBtn, corners, corners, p);
         drawText("DELETE", c, deleteBtn, p);
 
 //        buttonInstance = null;
 //        if (buttonShowedState == ButtonsState.LEFT_VISIBLE) {
-//            buttonInstance = editButton;
+//            buttonInstance = editBtn;
 //        } else if (buttonShowedState == ButtonsState.RIGHT_VISIBLE) {
 //            buttonInstance = deleteBtn;
 //        }
+
+        editBtnInstance = editBtn;
+        deleteBtnInstance = deleteBtn;
+
+
     }
 
     private static void drawText(String text, Canvas c, RectF button, Paint p) {
