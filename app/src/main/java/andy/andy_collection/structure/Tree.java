@@ -3,12 +3,14 @@
  * @Date: Apr 10, 2018
  * @Description:
  */
-package andy.andy_collection;
+package andy.andy_collection.structure;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * structure:
@@ -49,27 +51,35 @@ public class Tree implements Parcelable{
     }
 
     /**
-     * get all level 2 parent nodes
+     * get all nodes that are category
      * @return
      */
-    public ArrayList<Node> getAllLevel2Nodes(){
+    public List<Node> getAllCategoryNodes(){
         if(root != null && root.getChildren() != null) {
             return root.getChildren();
         }
         return null;
     }
 
+
     /**
-     * get all level 2 parent names
-     * @return
+     * adds collection element into tree
+     * @param c
      */
-    public String[] getAllLevel2NodeNames(){
-        ArrayList<Node> parent = getAllLevel2Nodes();
-        String[] rtn = new String[parent.size()];
-        for(int i=0; i<rtn.length; i++){
-            rtn[i] = parent.get(i).toString();
+    public void addCollectionElement(Collection c){
+        // try to get level 2 parent node in tree
+        Node parentNode = getLevel2NodeByCategory(c.getCategory());
+        // if parent is not found
+        if (parentNode == null) {
+            // create missing level 2 parent
+            parentNode = new Node(c.getCategory());
+            // add to root node (level 1)
+            root.addChildren(parentNode);
         }
-        return rtn;
+        // create level 3 node
+        Node newNode = new Node(c.getCategory(), c);
+        // add to level 2
+        parentNode.addChildren(newNode);
     }
 
 
@@ -115,11 +125,12 @@ public class Tree implements Parcelable{
     /**
      * @param root
      */
-    private void traverseTree(Node root) {
+    public void traverseTree(Node root) {
         if(root != null) {
             if(root.getData() != null) {
                 System.out.println(root.getData().toString());
             }else {
+                // if it's a category, output it's name only
                 System.out.println(root.toString());
             }
             if(root.getChildren() != null) {

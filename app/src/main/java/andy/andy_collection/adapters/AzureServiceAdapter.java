@@ -1,4 +1,4 @@
-package andy.andy_collection;
+package andy.andy_collection.adapters;
 
 import android.content.Context;
 import com.microsoft.windowsazure.mobileservices.*;
