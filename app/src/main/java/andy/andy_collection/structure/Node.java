@@ -3,7 +3,7 @@
  * @Date: Apr 10, 2018
  * @Description:
  */
-package andy.andy_collection;
+package andy.andy_collection.structure;
 
 import android.os.Parcel;
 import android.os.Parcelable;

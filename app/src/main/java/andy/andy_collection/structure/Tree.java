@@ -3,12 +3,14 @@
  * @Date: Apr 10, 2018
  * @Description:
  */
-package andy.andy_collection;
+package andy.andy_collection.structure;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * structure:
@@ -52,13 +54,18 @@ public class Tree implements Parcelable{
      * get all nodes that are category
      * @return
      */
-    public ArrayList<Node> getAllCategoryNodes(){
+    public List<Node> getAllCategoryNodes(){
         if(root != null && root.getChildren() != null) {
             return root.getChildren();
         }
         return null;
     }
 
+
+    /**
+     * adds collection element into tree
+     * @param c
+     */
     public void addCollectionElement(Collection c){
         // try to get level 2 parent node in tree
         Node parentNode = getLevel2NodeByCategory(c.getCategory());
@@ -73,19 +80,6 @@ public class Tree implements Parcelable{
         Node newNode = new Node(c.getCategory(), c);
         // add to level 2
         parentNode.addChildren(newNode);
-    }
-
-    /**
-     * get all level 2 parent names
-     * @return
-     */
-    public String[] getAllLevel2NodeNames(){
-        ArrayList<Node> parent = getAllCategoryNodes();
-        String[] rtn = new String[parent.size()];
-        for(int i=0; i<rtn.length; i++){
-            rtn[i] = parent.get(i).toString();
-        }
-        return rtn;
     }
 
 
@@ -131,7 +125,7 @@ public class Tree implements Parcelable{
     /**
      * @param root
      */
-    private void traverseTree(Node root) {
+    public void traverseTree(Node root) {
         if(root != null) {
             if(root.getData() != null) {
                 System.out.println(root.getData().toString());

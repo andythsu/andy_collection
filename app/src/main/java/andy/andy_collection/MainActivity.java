@@ -1,34 +1,35 @@
 package andy.andy_collection;
 
-import android.app.ActivityOptions;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import andy.andy_collection.adapters.AzureServiceAdapter;
+import andy.andy_collection.adapters.MainRVAdapter;
+import andy.andy_collection.structure.Collection;
+import andy.andy_collection.structure.Node;
+import andy.andy_collection.structure.Tree;
 import com.microsoft.windowsazure.mobileservices.*;
-import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
-import com.microsoft.windowsazure.mobileservices.table.TableOperationCallback;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity {
     private static MobileServiceClient mClient;
-    ListView parent_list_view;
+    //    ListView parent_list_view;
     TextView exception_label;
     FloatingActionButton add_btn;
+
+    RecyclerView rv;
+
+//    ArrayAdapter<String> parent_list_adapter;
 
     Tree t = new Tree();
     Node root = t.getRoot();
@@ -36,14 +37,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_recycler_view);
 
-        parent_list_view = (ListView) findViewById(R.id.parent_list);
+        rv = (RecyclerView) findViewById(R.id.main_rv);
         exception_label = (TextView) findViewById(R.id.exception_label);
-        add_btn = (FloatingActionButton) findViewById(R.id.add_btn);
 
+        rv.setLayoutManager(new LinearLayoutManager(this));
 
         init();
+
+//        parent_list_view = (ListView) findViewById(R.id.parent_list);
+        add_btn = (FloatingActionButton) findViewById(R.id.add_btn);
+
+//
 
         // add button clicked
         add_btn.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +70,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            toast("Inserted successfully");
+                            t.addCollectionElement(c);
+//                            parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
+//                            parent_list_view.setAdapter(parent_list_adapter);
+//                            parent_list_view.setOnItemClickListener(MainActivity.this);
+                            Util.toast(MainActivity.this, "Inserted successfully");
                         }
                     });
                 } catch (final Exception e) {
@@ -80,16 +90,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         };
 
-        runAsyncTask(task);
+        Util.runAsyncTask(task);
 
-    }
-
-    private void toast(String msg) {
-        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
     private void getAllDataFromDB() {
-        exception_label.setVisibility(View.INVISIBLE);
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -99,10 +104,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         @Override
                         public void run() {
                             initTree(results);
-                            t.traverseTree();
-                            ArrayAdapter<String> parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
-                            parent_list_view.setAdapter(parent_list_adapter);
-                            parent_list_view.setOnItemClickListener(MainActivity.this);
+                            exception_label.setVisibility(View.INVISIBLE);
+                            MainRVAdapter adapter = new MainRVAdapter(getApplicationContext(), t.getAllCategoryNodes());
+                            rv.setAdapter(adapter);
+//                            t.traverseTree();
+//                            parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
+//                            parent_list_view.setAdapter(parent_list_adapter);
+//                            parent_list_view.setOnItemClickListener(MainActivity.this);
                         }
                     });
                 } catch (final Exception e) {
@@ -118,16 +126,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         };
 
-        runAsyncTask(task);
+        Util.runAsyncTask(task);
 
-    }
-
-    private AsyncTask<Void, Void, Void> runAsyncTask(AsyncTask<Void, Void, Void> task) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            return task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            return task.execute();
-        }
     }
 
     private void init() {
@@ -219,7 +219,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
     */
-    
     public void initTree(List<Collection> result) {
         if (result != null) {
             for (Collection c : result) {
@@ -228,18 +227,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        TextView text = (TextView) view;
-        String clickedText = text.getText().toString();
-        Intent i = new Intent(getBaseContext(), ChildrenActivity.class);
-
-        // set the animation when jumping to another intent
-        ActivityOptions animation = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left);
-
-        i.putExtra("node", t.getLevel2NodeByCategory(clickedText));
-
-        startActivity(i, animation.toBundle());
-    }
+//    @Override
+//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//        TextView text = (TextView) view;
+//        String clickedText = text.getText().toString();
+//        Intent i = new Intent(getBaseContext(), ChildrenActivity.class);
+//
+//        // set the animation when jumping to another intent
+//        ActivityOptions animation = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left);
+//
+//        i.putExtra("node", t.getLevel2NodeByCategory(clickedText));
+//
+//        startActivity(i, animation.toBundle());
+//    }
 }
 
