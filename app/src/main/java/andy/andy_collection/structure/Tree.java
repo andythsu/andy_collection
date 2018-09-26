@@ -16,32 +16,13 @@ import java.util.List;
  * level 2: categories (folders)
  * level 3: locations
  */
-public class Tree implements Parcelable{
-    private Node root;
-    public Tree() {
-        root = new Node("root");
-    }
+public class Tree {
+    public static Node root = new Node("root");
 
-    protected Tree(Parcel in) {
-        root = in.readParcelable(Node.class.getClassLoader());
-    }
-
-    public static final Creator<Tree> CREATOR = new Creator<Tree>() {
-        @Override
-        public Tree createFromParcel(Parcel in) {
-            return new Tree(in);
-        }
-
-        @Override
-        public Tree[] newArray(int size) {
-            return new Tree[size];
-        }
-    };
-
-    public void traverseTree() {
+    public static void traverseTree() {
         traverseTree(root);
     }
-    public Node getRoot() {
+    public static Node getRoot() {
         return root;
     }
 
@@ -49,7 +30,7 @@ public class Tree implements Parcelable{
      * get all nodes that are category
      * @return
      */
-    public List<Node> getAllCategoryNodes(){
+    public static List<Node> getAllCategoryNodes(){
         if(root != null && root.getChildren() != null) {
             return root.getChildren();
         }
@@ -61,7 +42,7 @@ public class Tree implements Parcelable{
      * adds collection element into tree
      * @param c
      */
-    public void addCollectionElement(Collection c){
+    public static void addCollectionElement(Collection c){
         // try to get level 2 parent node in tree
         Node parentNode = getCategoryNodeByName(c.getCategory());
         // if parent is not found
@@ -83,7 +64,7 @@ public class Tree implements Parcelable{
      * @param name
      * @return
      */
-    public Node getCategoryNodeByName(String name) {
+    public static Node getCategoryNodeByName(String name) {
         if(root != null && root.getChildren() != null) {
             for(int i=0; i<root.getChildren().size(); i++) {
                 Node n = root.getChildren().get(i);
@@ -96,11 +77,20 @@ public class Tree implements Parcelable{
         return null;
     }
 
+    /**
+     * cleans level 2 parent node if there are no children left
+     */
+    public static void cleanNode(Node n){
+        if(n.getChildren().size() == 0){
+            root.getChildren().remove(n);
+        }
+    }
+
 
     /**
      * @param root
      */
-    public void traverseTree(Node root) {
+    public static void traverseTree(Node root) {
         if(root != null) {
             if(root.getData() != null) {
                 System.out.println(root.getData().toString());
@@ -117,14 +107,5 @@ public class Tree implements Parcelable{
         }
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(root, flags);
-    }
 
 }

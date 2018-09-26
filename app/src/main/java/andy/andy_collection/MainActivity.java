@@ -1,12 +1,17 @@
 package andy.andy_collection;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import andy.andy_collection.adapters.AzureServiceAdapter;
@@ -28,8 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView rv;
 
-    Tree t = new Tree();
-    Node root = t.getRoot();
+    MainRVAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,22 +53,79 @@ public class MainActivity extends AppCompatActivity {
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Collection c = Collection.create("new", "new_loc", "test");
-                insert(c);
+//                Collection c = Collection.create("new", "new_loc", "test");
+                showInsertDialog();
             }
         });
     }
 
-    private void insert(final Collection c) {
+    private void showInsertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        final EditText name_input = new EditText(this);
+        final EditText location_input = new EditText(this);
+        final EditText category_input = new EditText(this);
+
+        final TextView name_label = new TextView(this);
+        final TextView location_label = new TextView(this);
+        final TextView category_label = new TextView(this);
+
+        /* initializes the labels */
+        name_label.setText("Name: ");
+        name_label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        location_label.setText("Location: ");
+        location_label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        category_label.setText("Category: ");
+        category_label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+
+        /* add label and textfield to the layout and view */
+        LinearLayout ll = new LinearLayout(this);
+        ll.setOrientation(LinearLayout.VERTICAL);
+        ll.addView(name_label);
+        ll.addView(name_input);
+        ll.addView(location_label);
+        ll.addView(location_input);
+        ll.addView(category_label);
+        ll.addView(category_input);
+
+        builder.setView(ll);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String name = name_input.getText().toString();
+                String location = location_input.getText().toString();
+                String category = category_input.getText().toString();
+
+                Collection c = Collection.create(name, location, category);
+                insert(c);
+            }
+
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+    }
+
+
+    private void insert(final Collection data) {
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    mClient.getTable(Collection.class).insert(c).get();
+                    mClient.getTable(Collection.class).insert(data).get();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            t.addCollectionElement(c);
+                            Tree.addCollectionElement(data);
+                            adapter.notifyDataSetChanged();
                             Util.toast(MainActivity.this, "Inserted successfully");
                         }
                     });
@@ -96,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             initTree(results);
                             exception_label.setVisibility(View.INVISIBLE);
-                            MainRVAdapter adapter = new MainRVAdapter(getApplicationContext(), t.getAllCategoryNodes());
+                            adapter = new MainRVAdapter(getApplicationContext(), Tree.getAllCategoryNodes());
                             rv.setAdapter(adapter);
                         }
                     });
@@ -129,26 +190,12 @@ public class MainActivity extends AppCompatActivity {
         getAllDataFromDB();
     }
 
-
-    private void refresh() {
-        resetTree();
-        getAllDataFromDB();
-    }
-
     @Override
     protected void onRestart() {
         super.onRestart();
-        Tree t = new Tree();
-        t.traverseTree(t.getCategoryNodeByName("new_cataaa"));
+        adapter.notifyDataSetChanged();
+//       Tree.traverseTree(Tree.getCategoryNodeByName("new_cataaa"));
 //        refresh();
-    }
-
-    /**
-     * reset tree structure because new items are being added to DB
-     */
-    private void resetTree() {
-        t = new Tree();
-        root = t.getRoot();
     }
 
     public void setMobileClientInstance() {
@@ -166,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
     public void initTree(List<Collection> result) {
         if (result != null) {
             for (Collection c : result) {
-                t.addCollectionElement(c);
+                Tree.addCollectionElement(c);
             }
         }
     }
