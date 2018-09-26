@@ -1,16 +1,12 @@
 package andy.andy_collection;
 
-import android.app.ActivityOptions;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +18,6 @@ import andy.andy_collection.structure.Tree;
 import com.microsoft.windowsazure.mobileservices.*;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -52,18 +47,18 @@ public class MainActivity extends AppCompatActivity {
         init();
 
 //        parent_list_view = (ListView) findViewById(R.id.parent_list);
-//        add_btn = (FloatingActionButton) findViewById(R.id.add_btn);
+        add_btn = (FloatingActionButton) findViewById(R.id.add_btn);
 
 //
 
         // add button clicked
-//        add_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Collection c = Collection.create("new", "new_loc", "new_cataaa");
-//                insert(c);
-//            }
-//        });
+        add_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Collection c = Collection.create("new", "new_loc", "new_cataaa");
+                insert(c);
+            }
+        });
     }
 
     private void insert(final Collection c) {
@@ -79,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 //                            parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
 //                            parent_list_view.setAdapter(parent_list_adapter);
 //                            parent_list_view.setOnItemClickListener(MainActivity.this);
-                            toast("Inserted successfully");
+                            Util.toast(MainActivity.this, "Inserted successfully");
                         }
                     });
                 } catch (final Exception e) {
@@ -95,12 +90,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        runAsyncTask(task);
+        Util.runAsyncTask(task);
 
-    }
-
-    private void toast(String msg) {
-        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
     private void getAllDataFromDB() {
@@ -135,16 +126,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        runAsyncTask(task);
+        Util.runAsyncTask(task);
 
-    }
-
-    private AsyncTask<Void, Void, Void> runAsyncTask(AsyncTask<Void, Void, Void> task) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            return task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            return task.execute();
-        }
     }
 
     private void init() {

@@ -1,4 +1,4 @@
-package andy.andy_collection.swipeing;
+package andy.andy_collection.swiping;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -35,9 +35,9 @@ public class swipeController extends Callback {
 
     private static final float NUM_OF_BTNS = 2;
 
-    private static swipeActions buttonAction;
+    private static swipeButtonListener buttonAction;
 
-    public swipeController(swipeActions action) {
+    public swipeController(swipeButtonListener action) {
         this.buttonAction = action;
     }
 

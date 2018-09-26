@@ -1,6 +1,5 @@
-package andy.andy_collection.swipeing;
+package andy.andy_collection.swiping;
 
-public abstract class swipeActions {
-    public void onEdit(int position) {}
-    public void onDelete(int position) {}
+public abstract class swipeButtonListener {
+   public void onClicked(String op, int position) {}
 }
