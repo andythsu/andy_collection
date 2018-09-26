@@ -11,7 +11,7 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 
-public class Collection implements Parcelable {
+public class Collection {
     @com.google.gson.annotations.SerializedName("ID")
     private String ID; // PK in the DB
     @com.google.gson.annotations.SerializedName("Name")
@@ -32,25 +32,6 @@ public class Collection implements Parcelable {
         this.Location = location;
         this.Category = category;
     }
-
-    protected Collection(Parcel in) {
-        ID = in.readString();
-        Name = in.readString();
-        Location = in.readString();
-        Category = in.readString();
-    }
-
-    public static final Creator<Collection> CREATOR = new Creator<Collection>() {
-        @Override
-        public Collection createFromParcel(Parcel in) {
-            return new Collection(in);
-        }
-
-        @Override
-        public Collection[] newArray(int size) {
-            return new Collection[size];
-        }
-    };
 
     public void setName(String name) {
         this.Name = name;
@@ -96,19 +77,6 @@ public class Collection implements Parcelable {
     @Override
     public String toString() {
         return "ID: " + ID + "\n" + "Name: " + Name + "\n" + "Location: " + Location + "\n" + "Category: " + Category + "\n";
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(ID);
-        dest.writeString(Name);
-        dest.writeString(Location);
-        dest.writeString(Category);
     }
 
     /**

@@ -61,7 +61,7 @@ public class MainRVAdapter extends RecyclerView.Adapter<MainRVAdapter.MainViewHo
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Node parent_node = parent_nodes.get(position);
+                String parent_node = parent_nodes.get(position).getName();
                 Intent i = new Intent(context, ChildrenActivity.class);
                 ActivityOptions animation = ActivityOptions.makeCustomAnimation(context, R.anim.slide_in_right, R.anim.slide_out_left);
                 i.putExtra("node", parent_node);
