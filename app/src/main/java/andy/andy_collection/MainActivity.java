@@ -8,13 +8,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import andy.andy_collection.adapters.AzureServiceAdapter;
 import andy.andy_collection.adapters.MainRVAdapter;
 import andy.andy_collection.structure.Collection;
 import andy.andy_collection.structure.Node;
 import andy.andy_collection.structure.Tree;
+import andy.andy_collection.util.Util;
 import com.microsoft.windowsazure.mobileservices.*;
 
 import java.net.MalformedURLException;

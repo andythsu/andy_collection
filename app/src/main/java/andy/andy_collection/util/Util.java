@@ -1,4 +1,4 @@
-package andy.andy_collection;
+package andy.andy_collection.util;
 
 import android.content.Context;
 import android.os.AsyncTask;

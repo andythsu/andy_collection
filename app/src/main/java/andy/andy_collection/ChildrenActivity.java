@@ -10,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.TypedValue;
-import android.view.View;
 import android.widget.*;
 import andy.andy_collection.adapters.AzureServiceAdapter;
 import andy.andy_collection.adapters.ChildrenRVAdapter;
@@ -18,11 +17,10 @@ import andy.andy_collection.swiping.swipeButtonListener;
 import andy.andy_collection.swiping.swipeController;
 import andy.andy_collection.structure.Collection;
 import andy.andy_collection.structure.Node;
+import andy.andy_collection.util.Util;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 public class ChildrenActivity extends AppCompatActivity {
     ListView children_list_view;
