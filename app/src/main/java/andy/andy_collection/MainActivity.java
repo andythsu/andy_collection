@@ -136,9 +136,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        refresh();
+    protected void onRestart() {
+        super.onRestart();
+        Tree t = new Tree();
+
+//        refresh();
     }
 
     /**

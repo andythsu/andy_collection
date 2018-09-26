@@ -8,8 +8,6 @@ package andy.andy_collection.structure;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,9 +44,6 @@ public class Tree implements Parcelable{
     public Node getRoot() {
         return root;
     }
-    public Node getNodeByIndex(String index) {
-        return getNodeByIndex(root, index);
-    }
 
     /**
      * get all nodes that are category
@@ -68,7 +63,7 @@ public class Tree implements Parcelable{
      */
     public void addCollectionElement(Collection c){
         // try to get level 2 parent node in tree
-        Node parentNode = getLevel2NodeByCategory(c.getCategory());
+        Node parentNode = getCategoryNodeByName(c.getCategory());
         // if parent is not found
         if (parentNode == null) {
             // create missing level 2 parent
@@ -84,37 +79,17 @@ public class Tree implements Parcelable{
 
 
     /**
-     * get level 2 parent node by category
+     * get level 2 parent node by category name
      * @param name
      * @return
      */
-    public Node getLevel2NodeByCategory(String name) {
+    public Node getCategoryNodeByName(String name) {
         if(root != null && root.getChildren() != null) {
             for(int i=0; i<root.getChildren().size(); i++) {
                 Node n = root.getChildren().get(i);
                 // only check level 2s
                 if(n.getName().equals(name)) {
                     return n;
-                }
-            }
-        }
-        return null;
-    }
-    /**
-     * @param root
-     * @param id
-     */
-    private Node getNodeByIndex(Node root, String id) {
-        if(root != null) {
-            if(id.equals(root.getData().getID())) {
-                return root;
-            }else {
-                if(root.getChildren() != null) {
-                    for(int i=0; i<root.getChildren().size(); i++) {
-                        Node child = root.getChildren().get(i);
-                        if(child.getData().getID() == id) return child;
-                        traverseTree(child);
-                    }
                 }
             }
         }
