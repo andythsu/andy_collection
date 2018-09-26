@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Collection c = Collection.create("new", "new_loc", "new_cataaa");
+                Collection c = Collection.create("new", "new_loc", "test");
                 insert(c);
             }
         });
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         Tree t = new Tree();
-
+        t.traverseTree(t.getCategoryNodeByName("new_cataaa"));
 //        refresh();
     }
 
