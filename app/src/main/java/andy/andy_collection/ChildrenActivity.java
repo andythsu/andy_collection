@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 public class ChildrenActivity extends AppCompatActivity {
     ListView children_list_view;
+    String selectedCategory;
     Node parent_node;
     ArrayList<Node> children_node;
     RecyclerView rv;
@@ -37,8 +38,10 @@ public class ChildrenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.children_recycler_view);
 
-        parent_node = getIntent().getParcelableExtra("node");
+        selectedCategory = getIntent().getStringExtra("node");
+        parent_node = Tree.getCategoryNodeByName(selectedCategory);
 
+//        children_node = parent_node.getChildren();
         children_node = parent_node.getChildren();
 
         rv = (RecyclerView) findViewById(R.id.children_rv);
