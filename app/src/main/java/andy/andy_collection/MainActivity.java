@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 AzureServiceAdapter.Initialize(this);
                 mClient = AzureServiceAdapter.getInstance().getClient();
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                exception_label.setText(e.getMessage());
             }
         }
     }
