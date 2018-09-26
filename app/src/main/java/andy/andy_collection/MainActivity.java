@@ -23,13 +23,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static MobileServiceClient mClient;
-    //    ListView parent_list_view;
     TextView exception_label;
     FloatingActionButton add_btn;
 
     RecyclerView rv;
-
-//    ArrayAdapter<String> parent_list_adapter;
 
     Tree t = new Tree();
     Node root = t.getRoot();
@@ -46,10 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         init();
 
-//        parent_list_view = (ListView) findViewById(R.id.parent_list);
         add_btn = (FloatingActionButton) findViewById(R.id.add_btn);
-
-//
 
         // add button clicked
         add_btn.setOnClickListener(new View.OnClickListener() {
@@ -71,9 +65,6 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             t.addCollectionElement(c);
-//                            parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
-//                            parent_list_view.setAdapter(parent_list_adapter);
-//                            parent_list_view.setOnItemClickListener(MainActivity.this);
                             Util.toast(MainActivity.this, "Inserted successfully");
                         }
                     });
@@ -107,10 +98,6 @@ public class MainActivity extends AppCompatActivity {
                             exception_label.setVisibility(View.INVISIBLE);
                             MainRVAdapter adapter = new MainRVAdapter(getApplicationContext(), t.getAllCategoryNodes());
                             rv.setAdapter(adapter);
-//                            t.traverseTree();
-//                            parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
-//                            parent_list_view.setAdapter(parent_list_adapter);
-//                            parent_list_view.setOnItemClickListener(MainActivity.this);
                         }
                     });
                 } catch (final Exception e) {
@@ -139,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
         setMobileClientInstance();
 
         // retrieving data from DB
-        // getAllDataFromDB(); // old approach
         getAllDataFromDB();
     }
 
@@ -174,51 +160,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * legacy methods
-     */
 
-    /*
-    public void getAllDataFromDB() {
-        try {
-            mClient.getTable(Collection.class).execute(new TableQueryCallback<Collection>() {
-                @Override
-                public void onCompleted(List<Collection> result, int count, Exception exception, ServiceFilterResponse response) {
-                    exception_label.setVisibility(View.INVISIBLE);
-                    if (exception != null) {
-                        exception_label.setText(exception.toString());
-                        exception_label.setVisibility(View.VISIBLE);
-                    }
-                    initTree(result);
-                    t.traverseTree();
-                    ArrayAdapter<String> parent_list_adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, t.getAllLevel2NodeNames());
-                    parent_list_view.setAdapter(parent_list_adapter);
-                    parent_list_view.setOnItemClickListener(MainActivity.this);
-                }
-            });
-        } catch (MobileServiceException e) {
-            exception_label.setVisibility(View.VISIBLE);
-            e.printStackTrace();
-        }
-    }
-    */
-
-    /*
-    public void insert(Collection data) {
-        mClient.getTable(Collection.class).insert(data, new TableOperationCallback<Collection>() {
-            public void onCompleted(Collection entity, Exception exception, ServiceFilterResponse response) {
-                if (exception == null) {
-                    // Insert succeeded
-                    Toast.makeText(getApplicationContext(), "Inserted Successfully", Toast.LENGTH_LONG).show();
-                } else {
-                    // Insert failed
-                    Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
-                    exception.printStackTrace();
-                }
-            }
-        });
-    }
-    */
     public void initTree(List<Collection> result) {
         if (result != null) {
             for (Collection c : result) {
@@ -227,18 +169,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        TextView text = (TextView) view;
-//        String clickedText = text.getText().toString();
-//        Intent i = new Intent(getBaseContext(), ChildrenActivity.class);
-//
-//        // set the animation when jumping to another intent
-//        ActivityOptions animation = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left);
-//
-//        i.putExtra("node", t.getLevel2NodeByCategory(clickedText));
-//
-//        startActivity(i, animation.toBundle());
-//    }
 }
 

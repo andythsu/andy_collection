@@ -8,6 +8,7 @@ package andy.andy_collection.structure;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Node implements Parcelable{
@@ -23,6 +24,14 @@ public class Node implements Parcelable{
     public Node(String name, Collection d) {
         this.name = name;
         this.data = d;
+    }
+
+    public void remove(Collection data){
+        for (Node n : children){
+            if(n.getData().equals(data)){
+                children.remove(n);
+            }
+        }
     }
 
     protected Node(Parcel in) {

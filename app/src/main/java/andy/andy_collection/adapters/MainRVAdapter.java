@@ -30,15 +30,11 @@ public class MainRVAdapter extends RecyclerView.Adapter<MainRVAdapter.MainViewHo
     public static class MainViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         TextView name;
-        TextView location;
-        TextView category;
 
         public MainViewHolder(View itemView) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.main_cv);
             name = (TextView) itemView.findViewById(R.id.name);
-//            location = (TextView)itemView.findViewById(R.id.location);
-//            category = (TextView)itemView.findViewById(R.id.category);
         }
     }
 
@@ -62,8 +58,6 @@ public class MainRVAdapter extends RecyclerView.Adapter<MainRVAdapter.MainViewHo
     @Override
     public void onBindViewHolder(@NonNull MainViewHolder holder, final int position) {
         holder.name.setText(parent_nodes.get(position).getName());
-//        holder.location.setText(list.get(position).getLocation());
-//        holder.category.setText(list.get(position).getCategory());
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

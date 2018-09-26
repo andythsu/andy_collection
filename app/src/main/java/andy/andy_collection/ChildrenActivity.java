@@ -13,6 +13,7 @@ import android.util.TypedValue;
 import android.widget.*;
 import andy.andy_collection.adapters.AzureServiceAdapter;
 import andy.andy_collection.adapters.ChildrenRVAdapter;
+import andy.andy_collection.structure.Tree;
 import andy.andy_collection.swiping.swipeButtonListener;
 import andy.andy_collection.swiping.swipeController;
 import andy.andy_collection.structure.Collection;
@@ -36,12 +37,6 @@ public class ChildrenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.children_recycler_view);
 
-//        children_list_view = (ListView) findViewById(R.id.children_list);
-
-        // getting data passed in from MainActivity
-//        Node n = (Node) getIntent().getParcelableExtra("node");
-
-
         parent_node = getIntent().getParcelableExtra("node");
 
         children_node = parent_node.getChildren();
@@ -55,7 +50,7 @@ public class ChildrenActivity extends AppCompatActivity {
             public void onClicked(String op, int position) {
                 Collection data = children_node.get(position).getData();
                 if (op.equals("edit")) {
-                    edit(data);
+                    edit(data, position);
                 } else if (op.equals("delete")) {
                     delete(data);
                 }
@@ -72,18 +67,6 @@ public class ChildrenActivity extends AppCompatActivity {
                 swipeController.onDraw(c);
             }
         });
-
-        // getting all names and store as array to display to ListView
-//        String[] children_node_names = new String[children_node.size()];
-//
-//        for(int i=0; i<children_node_names.length; i++){
-//            children_node_names[i] = children_node.get(i).getData().getName();
-//        }
-        ////////////////////////////////////////////////////////////////
-
-//        ArrayAdapter<String> parent_list_adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, children_node_names);
-//        children_list_view.setAdapter(parent_list_adapter);
-//        children_list_view.setOnItemClickListener(this);
     }
 
     // overrides the animation when going back to previous intent
@@ -93,7 +76,7 @@ public class ChildrenActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
-    public void edit(final Collection data) {
+    public void edit(final Collection data, final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         String name = data.getName();
@@ -121,6 +104,7 @@ public class ChildrenActivity extends AppCompatActivity {
         category_label.setText("Category: ");
         category_label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 
+        /* add label and textfield to the layout and view */
         LinearLayout ll = new LinearLayout(this);
         ll.setOrientation(LinearLayout.VERTICAL);
         ll.addView(name_label);
@@ -139,10 +123,15 @@ public class ChildrenActivity extends AppCompatActivity {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         try {
+                            data.setName(name_input.getText().toString());
+                            data.setLocation(location_input.getText().toString());
+                            data.setCategory(category_input.getText().toString());
+                            children_node.get(position).getData().updateData(data);
                             mClient.getTable(Collection.class).update(data).get();
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    adapter.notifyDataSetChanged();
                                     Util.toast(ChildrenActivity.this, "Updated Successfully");
                                 }
                             });
@@ -167,7 +156,9 @@ public class ChildrenActivity extends AppCompatActivity {
                 dialogInterface.cancel();
             }
         });
+
         builder.show();
+
     }
 
     public void delete(final Collection data) {
@@ -184,15 +175,18 @@ public class ChildrenActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
-// perform delete
+                // perform delete
                 AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         try {
                             mClient.getTable(Collection.class).delete(data).get();
+                            parent_node.remove(data);
+                            children_node = parent_node.getChildren();
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    adapter.notifyDataSetChanged();
                                     Util.toast(ChildrenActivity.this, "Deleted Successfully");
                                 }
                             });

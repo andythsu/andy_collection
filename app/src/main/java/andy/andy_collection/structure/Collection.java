@@ -23,20 +23,9 @@ public class Collection implements Parcelable {
 
     public Collection() { }
 
-
-    // used by azure to bind data
-//    public Collection(String id, String name, String location, String category){
-//        this.ID = id;
-//        this.Name = name;
-//        this.Location = location;
-//        this.Category = category;
-//    }
-
-
     public static Collection create(String name, String location, String category) {
         return new Collection(name, location, category);
     }
-
 
     private Collection(String name, String location, String category) {
         this.Name = name;
@@ -71,12 +60,16 @@ public class Collection implements Parcelable {
         this.Location = location;
     }
 
-    public void setIndex(String id) {
-        this.ID = id;
-    }
-
     public void setCategory(String category) {
         this.Category = category;
+    }
+
+    public void updateData(Collection data){
+        if(this.ID.equals(data.getID())){
+            setName(data.getName());
+            setLocation(data.getLocation());
+            setCategory(data.getCategory());
+        }
     }
 
     public String getName() {
@@ -93,6 +86,11 @@ public class Collection implements Parcelable {
 
     public String getCategory() {
         return Category;
+    }
+
+    public boolean equals(Collection data){
+        if(this.ID.equals(data.getID())) return true;
+        return false;
     }
 
     @Override
