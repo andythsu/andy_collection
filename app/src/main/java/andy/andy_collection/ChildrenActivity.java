@@ -3,7 +3,6 @@ package andy.andy_collection;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.TypedValue;
 import android.widget.*;
-import andy.andy_collection.adapters.AzureServiceAdapter;
 import andy.andy_collection.adapters.ChildrenRVAdapter;
 import andy.andy_collection.database.DB;
 import andy.andy_collection.database.DBCallBack;
@@ -26,7 +24,6 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import java.util.ArrayList;
 
 public class ChildrenActivity extends AppCompatActivity {
-    ListView children_list_view;
     String selectedCategory;
     Node parent_node;
     ArrayList<Node> children_node;

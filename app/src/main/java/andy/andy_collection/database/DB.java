@@ -1,11 +1,7 @@
 package andy.andy_collection.database;
 
 import android.os.AsyncTask;
-import android.view.View;
-import andy.andy_collection.ChildrenActivity;
-import andy.andy_collection.MainActivity;
 import andy.andy_collection.structure.Collection;
-import andy.andy_collection.structure.Tree;
 import andy.andy_collection.util.Util;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 

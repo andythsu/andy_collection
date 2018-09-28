@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Collection c = Collection.create("new", "new_loc", "test");
                 showInsertDialog();
             }
         });
