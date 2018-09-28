@@ -13,6 +13,8 @@ import android.util.TypedValue;
 import android.widget.*;
 import andy.andy_collection.adapters.AzureServiceAdapter;
 import andy.andy_collection.adapters.ChildrenRVAdapter;
+import andy.andy_collection.database.DB;
+import andy.andy_collection.database.DBCallBack;
 import andy.andy_collection.structure.Tree;
 import andy.andy_collection.swiping.swipeButtonListener;
 import andy.andy_collection.swiping.swipeController;
@@ -30,7 +32,8 @@ public class ChildrenActivity extends AppCompatActivity {
     ArrayList<Node> children_node;
     RecyclerView rv;
     ChildrenRVAdapter adapter;
-    private static MobileServiceClient mClient = AzureServiceAdapter.getInstance().getClient();
+    private static MobileServiceClient mClient;
+    DB db;
 
 
     @Override
@@ -41,8 +44,9 @@ public class ChildrenActivity extends AppCompatActivity {
         selectedCategory = getIntent().getStringExtra("node");
         parent_node = Tree.getCategoryNodeByName(selectedCategory);
 
-//        children_node = parent_node.getChildren();
         children_node = parent_node.getChildren();
+
+        init();
 
         rv = (RecyclerView) findViewById(R.id.children_rv);
         rv.setLayoutManager(new LinearLayoutManager(this));
@@ -55,7 +59,7 @@ public class ChildrenActivity extends AppCompatActivity {
                 if (op.equals("edit")) {
                     edit(data, position);
                 } else if (op.equals("delete")) {
-                    delete(data);
+                    remove(data);
                 }
             }
         });
@@ -70,6 +74,18 @@ public class ChildrenActivity extends AppCompatActivity {
                 swipeController.onDraw(c);
             }
         });
+    }
+
+    private void init() {
+        // getting instance of Azure Mobile Client & table
+        setMobileClientInstance();
+
+        // set the database instance
+        db = new DB(mClient);
+    }
+
+    private void setMobileClientInstance() {
+        mClient = Util.setMobileServiceClient(mClient, this);
     }
 
     // overrides the animation when going back to previous intent
@@ -122,34 +138,13 @@ public class ChildrenActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        try {
-                            data.setName(name_input.getText().toString());
-                            data.setLocation(location_input.getText().toString());
-                            data.setCategory(category_input.getText().toString());
-                            children_node.get(position).getData().updateData(data);
-                            mClient.getTable(Collection.class).update(data).get();
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    adapter.notifyDataSetChanged();
-                                    Util.toast(ChildrenActivity.this, "Updated Successfully");
-                                }
-                            });
-                        } catch (final Exception e) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Util.toast(ChildrenActivity.this, e.getMessage());
-                                }
-                            });
-                        }
-                        return null;
-                    }
-                };
-                Util.runAsyncTask(task);
+                data.setName(name_input.getText().toString());
+                data.setLocation(location_input.getText().toString());
+                data.setCategory(category_input.getText().toString());
+                // update the data in the tree (for UI purpose)
+                children_node.get(position).getData().updateData(data);
+                // perform update
+                update(data);
             }
         });
 
@@ -164,7 +159,32 @@ public class ChildrenActivity extends AppCompatActivity {
 
     }
 
-    public void delete(final Collection data) {
+    public void update(final Collection data) {
+        db.update(data, new DBCallBack() {
+            @Override
+            public void updateSuccess() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                        Util.toast(ChildrenActivity.this, "Updated Successfully");
+                    }
+                });
+            }
+
+            @Override
+            public void getException(final Exception e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.toast(ChildrenActivity.this, e.getMessage());
+                    }
+                });
+            }
+        });
+    }
+
+    public void remove(final Collection data) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         TextView label = new TextView(this);
         label.setText("Are you sure you want to delete?");
@@ -179,32 +199,7 @@ public class ChildrenActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 // perform delete
-                AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        try {
-                            mClient.getTable(Collection.class).delete(data).get();
-                            parent_node.remove(data);
-                            children_node = parent_node.getChildren();
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    adapter.notifyDataSetChanged();
-                                    Util.toast(ChildrenActivity.this, "Deleted Successfully");
-                                }
-                            });
-                        } catch (final Exception e) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Util.toast(ChildrenActivity.this, e.getMessage());
-                                }
-                            });
-                        }
-                        return null;
-                    }
-                };
-                Util.runAsyncTask(task);
+                delete(data);
             }
         });
 
@@ -217,6 +212,30 @@ public class ChildrenActivity extends AppCompatActivity {
 
         builder.show();
 
+    }
+
+    public void delete(final Collection data) {
+        parent_node.remove(data);
+        children_node = parent_node.getChildren();
+
+        db.delete(data, new DBCallBack() {
+            @Override
+            public void deleteSuccess() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                        Util.toast(ChildrenActivity.this, "Deleted Successfully");
+                    }
+                });
+            }
+
+            @Override
+            public void getException(Exception e) {
+                Util.toast(ChildrenActivity.this, e.getMessage());
+            }
+
+        });
     }
 
 }

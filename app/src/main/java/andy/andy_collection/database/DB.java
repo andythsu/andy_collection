@@ -1,9 +1,9 @@
-package andy.andy_collection;
+package andy.andy_collection.database;
 
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import andy.andy_collection.adapters.MainRVAdapter;
+import andy.andy_collection.ChildrenActivity;
+import andy.andy_collection.MainActivity;
 import andy.andy_collection.structure.Collection;
 import andy.andy_collection.structure.Tree;
 import andy.andy_collection.util.Util;
@@ -11,37 +11,23 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
 import java.util.List;
 
-public class DB extends AppCompatActivity {
+public class DB extends DBCallBack {
 
-    public void getAllDataFromDB(final MobileServiceClient mClient, ){
+    final MobileServiceClient mClient;
+
+    public DB(MobileServiceClient mClient) {
+        this.mClient = mClient;
+    }
+
+    public void getAllDataFromDB(final DBCallBack callback) {
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
                     final List<Collection> results = mClient.getTable(Collection.class).execute().get();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            exception_label.setVisibility(View.INVISIBLE);
-                            adapter = new MainRVAdapter(getApplicationContext(), Tree.getAllCategoryNodes());
-                            rv.setAdapter(adapter);
-                        }
-                    });
+                    callback.getAllDataFromDB(results);
                 } catch (final Exception e) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            StringBuilder sb = new StringBuilder();
-                            sb.append("Unable to fetch data from DB")
-                                    .append("\n")
-                                    .append(e.getMessage())
-                                    .append("\n\n")
-                                    .append("Retrying...");
-                            exception_label.setText(sb.toString());
-                            exception_label.setVisibility(View.VISIBLE);
-                            getAllDataFromDB();
-                        }
-                    });
+                    callback.getException(e);
                 }
                 return null;
             }
@@ -51,4 +37,57 @@ public class DB extends AppCompatActivity {
 
     }
 
+    public void insert(final Collection data, final DBCallBack callback) {
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    mClient.getTable(Collection.class).insert(data).get();
+                    callback.insertSuccess();
+                } catch (final Exception e) {
+                    callback.getException(e);
+                }
+                return null;
+            }
+        };
+
+        Util.runAsyncTask(task);
+
+    }
+
+    public void update(final Collection data, final DBCallBack callback) {
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    mClient.getTable(Collection.class).update(data).get();
+                    callback.updateSuccess();
+                } catch (final Exception e) {
+
+                }
+                return null;
+            }
+        };
+
+        Util.runAsyncTask(task);
+
+    }
+
+    public void delete(final Collection data, final DBCallBack callback){
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    mClient.getTable(Collection.class).delete(data).get();
+                    callback.deleteSuccess();
+                } catch (final Exception e) {
+                   callback.getException(e);
+                }
+                return null;
+            }
+        };
+
+        Util.runAsyncTask(task);
+
+    }
 }

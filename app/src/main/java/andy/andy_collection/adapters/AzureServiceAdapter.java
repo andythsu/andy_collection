@@ -31,8 +31,11 @@ public class AzureServiceAdapter {
         return mInstance;
     }
 
-    public MobileServiceClient getClient() {
-        return mClient;
+    public static MobileServiceClient getClient(Context context) throws MalformedURLException {
+        if(mInstance == null){
+            Initialize(context);
+        }
+        return getInstance().mClient;
     }
 
     // Place any public methods that operate on mClient here.

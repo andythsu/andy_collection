@@ -2,7 +2,6 @@ package andy.andy_collection;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,15 +13,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import andy.andy_collection.adapters.AzureServiceAdapter;
 import andy.andy_collection.adapters.MainRVAdapter;
+import andy.andy_collection.database.DB;
 import andy.andy_collection.structure.Collection;
-import andy.andy_collection.structure.Node;
 import andy.andy_collection.structure.Tree;
+import andy.andy_collection.database.DBCallBack;
 import andy.andy_collection.util.Util;
 import com.microsoft.windowsazure.mobileservices.*;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
 
@@ -34,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView rv;
 
     MainRVAdapter adapter;
+
+    DB db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,74 +116,65 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void insert(final Collection data) {
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        db.insert(data, new DBCallBack() {
             @Override
-            protected Void doInBackground(Void... voids) {
-                try {
-                    mClient.getTable(Collection.class).insert(data).get();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Tree.addCollectionElement(data);
-                            adapter.notifyDataSetChanged();
-                            Util.toast(MainActivity.this, "Inserted successfully");
-                        }
-                    });
-                } catch (final Exception e) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            exception_label.setText(e.getMessage());
-                            exception_label.setVisibility(View.VISIBLE);
-                        }
-                    });
-                }
-                return null;
+            public void insertSuccess() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Tree.addCollectionElement(data);
+                        adapter.notifyDataSetChanged();
+                        Util.toast(MainActivity.this, "Inserted successfully");
+                    }
+                });
             }
-        };
 
-        Util.runAsyncTask(task);
-
+            @Override
+            public void getException(final Exception e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        exception_label.setText(e.getMessage());
+                        exception_label.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        });
     }
 
     private void getAllDataFromDB() {
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        db.getAllDataFromDB(new DBCallBack() {
             @Override
-            protected Void doInBackground(Void... voids) {
-                try {
-                    final List<Collection> results = mClient.getTable(Collection.class).execute().get();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            initTree(results);
-                            exception_label.setVisibility(View.INVISIBLE);
-                            adapter = new MainRVAdapter(getApplicationContext(), Tree.getAllCategoryNodes());
-                            rv.setAdapter(adapter);
-                        }
-                    });
-                } catch (final Exception e) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            StringBuilder sb = new StringBuilder();
-                            sb.append("Unable to fetch data from DB")
-                              .append("\n")
-                              .append(e.getMessage())
-                              .append("\n\n")
-                              .append("Retrying...");
-                            exception_label.setText(sb.toString());
-                            exception_label.setVisibility(View.VISIBLE);
-                            getAllDataFromDB();
-                        }
-                    });
-                }
-                return null;
+            public void getAllDataFromDB(final List<Collection> results) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initTree(results);
+                        Tree.traverseTree();
+                        exception_label.setVisibility(View.INVISIBLE);
+                        adapter = new MainRVAdapter(getApplicationContext(), Tree.getAllCategoryNodes());
+                        rv.setAdapter(adapter);
+                    }
+                });
             }
-        };
 
-        Util.runAsyncTask(task);
-
+            @Override
+            public void getException(final Exception e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Unable to fetch data from DB")
+                                .append("\n")
+                                .append(e.getMessage());
+                        exception_label.setText(sb.toString());
+                        exception_label.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        });
     }
+
 
     private void init() {
         // sets the default screen message
@@ -193,32 +184,23 @@ public class MainActivity extends AppCompatActivity {
         // getting instance of Azure Mobile Client & table
         setMobileClientInstance();
 
+        // set the database instance
+        db = new DB(mClient);
+
         // retrieving data from DB
         getAllDataFromDB();
+
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        adapter.notifyDataSetChanged();
         setMobileClientInstance();
+        if (adapter != null) adapter.notifyDataSetChanged();
     }
 
     public void setMobileClientInstance() {
-        if (mClient == null) {
-            try {
-                AzureServiceAdapter.Initialize(this);
-                mClient = AzureServiceAdapter.getInstance().getClient();
-            } catch (MalformedURLException e) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(e.getMessage())
-                        .append("\n\n")
-                        .append("Retrying...")
-                        .toString();
-                exception_label.setText(sb);
-                setMobileClientInstance();
-            }
-        }
+       mClient = Util.setMobileServiceClient(mClient, this);
     }
 
 
