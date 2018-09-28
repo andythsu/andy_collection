@@ -165,8 +165,15 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            exception_label.setText(e.getMessage());
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("Unable to fetch data from DB")
+                              .append("\n")
+                              .append(e.getMessage())
+                              .append("\n\n")
+                              .append("Retrying...");
+                            exception_label.setText(sb.toString());
                             exception_label.setVisibility(View.VISIBLE);
+                            getAllDataFromDB();
                         }
                     });
                 }
@@ -194,8 +201,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         adapter.notifyDataSetChanged();
-//       Tree.traverseTree(Tree.getCategoryNodeByName("new_cataaa"));
-//        refresh();
+        setMobileClientInstance();
     }
 
     public void setMobileClientInstance() {
@@ -204,7 +210,13 @@ public class MainActivity extends AppCompatActivity {
                 AzureServiceAdapter.Initialize(this);
                 mClient = AzureServiceAdapter.getInstance().getClient();
             } catch (MalformedURLException e) {
-                exception_label.setText(e.getMessage());
+                StringBuilder sb = new StringBuilder();
+                sb.append(e.getMessage())
+                        .append("\n\n")
+                        .append("Retrying...")
+                        .toString();
+                exception_label.setText(sb);
+                setMobileClientInstance();
             }
         }
     }
