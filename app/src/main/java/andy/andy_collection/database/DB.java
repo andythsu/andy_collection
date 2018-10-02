@@ -59,7 +59,7 @@ public class DB extends DBCallBack {
                     mClient.getTable(Collection.class).update(data).get();
                     callback.updateSuccess();
                 } catch (final Exception e) {
-
+                    callback.getException(e);
                 }
                 return null;
             }
@@ -69,7 +69,7 @@ public class DB extends DBCallBack {
 
     }
 
-    public void delete(final Collection data, final DBCallBack callback){
+    public void delete(final Collection data, final DBCallBack callback) {
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -77,7 +77,7 @@ public class DB extends DBCallBack {
                     mClient.getTable(Collection.class).delete(data).get();
                     callback.deleteSuccess();
                 } catch (final Exception e) {
-                   callback.getException(e);
+                    callback.getException(e);
                 }
                 return null;
             }
